@@ -1,51 +1,119 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
-
 {% block title %}
     肥肥的故乡|首页
 {% endblock %}
+{% block nav_home_active %}active{% endblock %}
+
+{% load staticfiles %}
+{% load likes_tags %}
 
 {% block header_extends %}
     <link rel="stylesheet" href="{% static 'home.css' %}">
     <script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
 {% endblock %}
 
-{% block nav_home_active %}active{% endblock %}"
+
 
 {% block content %}
-    <h3 class="home-content">免费提供肥宅快乐水!</h3>
-    <!-- 图表容器 DOM -->
-    <div id="container"></div>
-    <div class="hot-data">
-        <h3>今天热门博客</h3>
-        <ul>
-            {% for hot_data in today_hot_data %}
-                <li><a href="{% url 'blog_detail' hot_data.id %}">{{ hot_data.title }}</a>({{ hot_data.read_num_sum}})</li>
-            {% empty %}
-                <li>今天暂无热门博客,望众肥肥给力</li>
-            {% endfor %}
-        </ul>
+    <img class="img-data" src="{% static 'img/acfun.png' %}">  
+    <div class="container" id="body-content">
+        <div class="row">
+            <div class="left-part">
+                <div id="content-part">
+                    <h4>阅读数最多文章：</h4>
+                    <span class="glyphicon glyphicon-tag"><a href="{% url 'blogs_with_type' read_hot_data.blog_type.pk %}">&nbsp;{{ read_hot_data.blog_type }}</a></span> 
+                    <span class="glyphicon glyphicon-user">&nbsp;{{ read_hot_data.author }}</span>
+                    <h2>{{ read_hot_data.title }}</h3>
+                    <p>
+                        <img height="170" width="280" src="{{ read_hot_data.get_contentimg_url }}">
+                        {{ read_hot_data.content|safe|striptags|truncatechars:50 }}
+                        <a href="{% url 'blog_detail' read_hot_data.id %}">...阅读全文</a>
+                    </p>
+                    <div class="like" onclick="likeChange(this, '{% get_content_type read_hot_data %}', {{ read_hot_data.id }})">
+                        <span class="glyphicon glyphicon-thumbs-up {% get_like_status read_hot_data %}"></span>
+                        <span class="liked-num">{% get_like_count read_hot_data %}</span>
+                        <span>喜欢</span>
+                    </div>
+                    <HR>
+                </div>
+                <div id="content-part">
+                    <h4>点赞数最多文章：</h4>
+                    <span class="glyphicon glyphicon-tag"><a href="{% url 'blogs_with_type' like_hot_data.blog_type.pk %}">&nbsp;{{ like_hot_data.blog_type }}</a></span> 
+                    <span class="glyphicon glyphicon-user">&nbsp;{{ like_hot_data.author }}</span>
+                    <h2>{{ like_hot_data.title }}</h3>
+                    <p>
+                        <img height="170" width="280" src="{{ like_hot_data.get_contentimg_url }}">
+                        {{ like_hot_data.content|safe|striptags|truncatechars:50 }}
+                        <a href="{% url 'blog_detail' like_hot_data.id %}">...阅读全文</a>
+                    </p>
+                    <div class="like" onclick="likeChange(this, '{% get_content_type like_hot_data %}', {{ like_hot_data.id }})">
+                        <span class="glyphicon glyphicon-thumbs-up {% get_like_status like_hot_data %}"></span>
+                        <span class="liked-num">{% get_like_count like_hot_data %}</span>
+                        <span>喜欢</span>
+                    </div>
+                    <HR>
+                </div>
+                <div id="content-part">
+                    <h4>评论数最多文章：</h4>
+                    <span class="glyphicon glyphicon-tag"><a href="{% url 'blogs_with_type' comment_hot_data.blog_type.pk %}">&nbsp;{{ comment_hot_data.blog_type }}</a></span> 
+                    <span class="glyphicon glyphicon-user">&nbsp;{{ comment_hot_data.author }}</span>
+                    <h2>{{ comment_hot_data.title }}</h3>
+                    <p>
+                        <img height="170" width="280" src="{{ comment_hot_data.get_contentimg_url }}">
+                        {{ comment_hot_data.content|safe|striptags|truncatechars:50 }}
+                        <a href="{% url 'blog_detail' comment_hot_data.id %}">...阅读全文</a>
+                    </p>
+                    <div class="like" onclick="likeChange(this, '{% get_content_type comment_hot_data %}', {{ comment_hot_data.id }})">
+                        <span class="glyphicon glyphicon-thumbs-up {% get_like_status comment_hot_data %}"></span>
+                        <span class="liked-num">{% get_like_count comment_hot_data %}</span>
+                        <span>喜欢</span>
+                    </div>
+                    <HR>
+                </div>                            
+            </div>
+            
+            <div class="right-part">
+                <div class="hot-data">
+                    <h3>今天热门博客</h3>
+                    <ul>
+                        {% for hot_data in today_hot_data %}
+                            <li><a href="{% url 'blog_detail' hot_data.id %}">{{ hot_data.title }}</a>({{ hot_data.read_num_sum}})</li>
+                        {% empty %}
+                            <li>今天暂无热门博客,望众肥肥给力</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="hot-data">
+                    <h3>昨天热门博客</h3>
+                    <ul>
+                        {% for hot_data in yesterday_hot_data %}
+                            <li><a href="{% url 'blog_detail' hot_data.id %}">{{ hot_data.title }}</a>({{ hot_data.read_num_sum}})</li>
+                        {% empty %}
+                            <li>今天暂无热门博客,望众肥肥给力</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="hot-data">
+                    <h3>7天热门博客</h3>
+                    <ul>
+                        {% for hot_blog in hot_blogs_for_7_days %}
+                            <li><a href="{% url 'blog_detail' hot_blog.id %}">{{ hot_blog.title }}</a>({{ hot_blog.read_num_sum}})</li>
+                        {% empty %}
+                            <li>本周暂无热门博客,望众肥肥给力</li>
+                        {% endfor %}
+                    </ul>       
+                </div>
+                <!-- 图表容器 DOM -->
+                <div id="container"></div>
+                <span>联系我们：1016450320@qq.com  Have a nice day!</span>
+            </div>                    
+            
+        </div>
     </div>
-    <div class="hot-data">
-        <h3>昨天热门博客</h3>
-        <ul>
-            {% for hot_data in yesterday_hot_data %}
-                <li><a href="{% url 'blog_detail' hot_data.id %}">{{ hot_data.title }}</a>({{ hot_data.read_num_sum}})</li>
-            {% empty %}
-                <li>今天暂无热门博客,望众肥肥给力</li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="hot-data">
-        <h3>7天热门博客</h3>
-        <ul>
-            {% for hot_blog in hot_blogs_for_7_days %}
-                <li><a href="{% url 'blog_detail' hot_blog.id %}">{{ hot_blog.title }}</a>({{ hot_blog.read_num_sum}})</li>
-            {% empty %}
-                <li>本周暂无热门博客,望众肥肥给力</li>
-            {% endfor %}
-        </ul>       
-    </div>
+{% endblock %}
+
+{% block script_extends %}
+              
     <script>
         // 图表配置
         var options = {
@@ -77,5 +145,44 @@
         };
         // 图表初始化函数
         var chart = Highcharts.chart('container', options);
+        //点赞系统
+        function likeChange(obj, content_type, object_id){
+            var is_like = obj.getElementsByClassName('active').length == 0
+            $.ajax({
+                url: "{% url 'like_change' %}",
+                type: 'GET',
+                data: {
+                    content_type: content_type,
+                    object_id: object_id,
+                    is_like: is_like
+                },
+                cache: false,
+                success: function(data){
+                    console.log(data)
+                    if(data['status']=='SUCCESS'){
+                        // 更新点赞状态
+                        var element = $(obj.getElementsByClassName('glyphicon'));
+                        if(is_like){
+                            element.addClass('active');
+                        }else{
+                            element.removeClass('active');
+                        }
+                        // 更新点赞数量
+                        var liked_num = $(obj.getElementsByClassName('liked-num'));
+                        liked_num.text(data['liked_num']);
+                    }else{
+                        if(data['code']==400){
+                            $('#login_modal').modal('show');
+                        }else{
+                            alert(data['message']);
+                        }
+                    }
+                },
+                error: function(xhr){
+                    console.log(xhr)
+                }
+            });
+        }
     </script>
 {% endblock %}
+

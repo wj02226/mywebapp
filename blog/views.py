@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db.models import Count
 from django.contrib.contenttypes.models import ContentType
 from .models import Blog, BlogType
+from blog.forms import BlogForm
 from read_statistics.utils import read_statistics_once_read
 
 
@@ -66,3 +67,15 @@ def blog_detail(request, blog_pk):
     response = render(request, 'blog/blog_detail.html', context)
     response.set_cookie(read_cookie_key, 'true') #阅读cookie标识
     return response
+
+def blogs_query(request):
+    blog_form = BlogForm(request.POST)
+    context = {}
+    if blog_form.is_valid():
+        title_or_name = blog_form.cleaned_data['text']
+        blogs_all_list = Blog.objects.filter(title__contains=title_or_name)
+
+        context = get_blog_list_common_data(request, blogs_all_list)
+        context['title_or_name'] = title_or_name
+    context['blog_form'] = blog_form          
+    return render(request, 'blog/blogs_query.html', context)

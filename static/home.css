@@ -1,18 +1,69 @@
-h3.home-content {
-    font-size: 250%;
-    text-align: center;
-    margin-top: 4em;
-    margin-bottom: 2em;
+
+div#body-content{
+    min-width: 100%;
+    min-height: 100%;
+    box-sizing:border-box;
+    background-color: #e7e7e7;
 }
 
 div#container {
-    margin: 0 auto;
-    height: 20em;
-    min-width: 20em;
-    max-width: 30em;
+    height: 9em;
+    width:300px;
 }
 
-div.hot-data {
-    text-align: center;
-    margin-top: 2em;
+div#container .highcharts-container {
+    right: 2.85em;
+}
+
+div.left-part {
+    width: 785px;
+    float: left; 
+}
+
+div#content-part {
+    padding: 40px;
+    margin: 3em;
+    background-color: #fff;    
+    height: 29em;
+    font-size: 110%;
+}
+
+div#content-part > span {
+    display: block;
+    padding-bottom: 0.5em;
+}
+
+div#content-part > h4 {
+    color: #8590a6;
+}
+
+img.img-data {
+    margin-top: -25px!important;
+}
+
+div.right-part {
+    float: right;
+    padding: 40px;
+    margin: 3.3em;
+    background-color: #fff;
+    width:300px;
+    height:500px;
+}
+
+div.right-part > span {
+    position: relative;
+    right: 40px;
+    display: block; 
+    color: #8590a6;
+}
+
+div.like {
+    color: #337ab7;
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.5em 0.3em;
+}
+
+div.like .active{
+    color: #f22;
 }
